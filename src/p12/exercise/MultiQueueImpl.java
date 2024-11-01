@@ -65,13 +65,13 @@ public class MultiQueueImpl<T, Q> implements MultiQueue<T, Q>{
     @Override
     public Map<Q, T> dequeueOneFromAllQueues() {
         
-        Map<Q,T> test = new TreeMap<>();
+        Map<Q,T> deq = new TreeMap<>();
         for(Q queue : map.keySet()){
 
-            test.put(queue, map.get(queue).poll());
+            deq.put(queue, map.get(queue).poll());
 
         }
-        return test;
+        return deq;
 
     }
 
@@ -80,9 +80,7 @@ public class MultiQueueImpl<T, Q> implements MultiQueue<T, Q>{
         
         Set<T> set = new TreeSet<>();
         for(Q key : map.keySet()){
-            for(T elem : map.get(key)){
-                set.add(elem);
-            }
+            set.addAll(map.get(key));
         }
         
         return set;
@@ -95,12 +93,12 @@ public class MultiQueueImpl<T, Q> implements MultiQueue<T, Q>{
     public List<T> dequeueAllFromQueue(Q queue) {
         
         if(!map.containsKey(queue)) throw new IllegalArgumentException();
-        List<T> prova = new LinkedList<>();
+        List<T> list = new LinkedList<>();
         while(!(map.get(queue).isEmpty())){
-            prova.add(map.get(queue).poll());
+            list.add(map.get(queue).poll());
         }
 
-        return prova;
+        return list;
     }
 
     @Override
@@ -108,9 +106,9 @@ public class MultiQueueImpl<T, Q> implements MultiQueue<T, Q>{
 
         if(!map.containsKey(queue)) throw new IllegalArgumentException();
         if(map.keySet().size()==1) throw new IllegalStateException();
-        List<T> prova = dequeueAllFromQueue(queue);
+        List<T> list = dequeueAllFromQueue(queue);
         map.remove(queue);
-        map.get(map.keySet().iterator().next()).addAll(prova);
+        map.get(map.keySet().iterator().next()).addAll(list);
         
         
     }   
